@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("juegos/", include("juegos.urls")),
-
+    path('', lambda request: redirect('buscar_juegos')),  # Redirige a la vista de buscar
+    path('steam/', include('steamapp.urls')),
 ]
