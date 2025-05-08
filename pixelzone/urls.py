@@ -20,6 +20,7 @@ from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', lambda request: redirect('buscar_juegos')),  # Redirige a la vista de buscar
+    path('', include('juegos.urls')),
+    path('steam_buscar/', lambda request: redirect('buscar_juegos')),  # Redirige a la vista de buscar
     path('steam/', include('steamapp.urls')),
 ]
