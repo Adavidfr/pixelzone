@@ -1,38 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ nombre }} - PixelZone{% endblock %}
-
 {% block content %}
-<div class="card mb-4">
-    <div class="row g-0">
-        <!-- Imagen del juego -->
-        <div class="col-md-4">
-            <img src="{{ imagen }}" class="img-fluid rounded-start" alt="{{ nombre }}">
+<div class="row">
+    <div class="col-md-6">
+        <h2>{{ juego.nombre }}</h2>
+        <p><strong>Desarrollador:</strong> {{ juego.desarrollador }}</p>
+        <p><strong>Género:</strong> {{ juego.genero }}</p>
+        <p><strong>Fecha de lanzamiento:</strong> {{ juego.fecha_lanzamiento }}</p>
+        <p><strong>Precio:</strong> ${{ juego.precio }}</p>
+        {% if juego.descuento > 0 %}
+            <p><strong>Descuento:</strong> {{ juego.descuento }}%</p>
+        {% endif %}
+        <p><strong>Descripción:</strong></p>
+        <p>{{ juego.descripcion }}</p>
+    </div>
+
+    <div class="col-md-6">
+        {% if juego.imagen_principal %}
+            <img src="{{ juego.imagen_principal }}" class="img-fluid mb-2" alt="Imagen principal">
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2">
+            {% for img in imagenes_extra %}
+                <img src="{{ img }}" class="img-thumbnail" style="width: 100px; height: auto;" alt="Extra">
+            {% endfor %}
         </div>
 
-        <!-- Detalles del juego -->
-        <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title">{{ nombre }}</h5>
-                <p class="card-text">{{ descripcion }}</p>
-
-                <!-- Información de precio y descuento -->
-                {% if gratis %}
-                    <span class="badge bg-success">¡Gratis!</span>
-                {% else %}
-                    <p><strong>Precio:</strong> ${{ precio.final|floatformat:2 }}</p>
-                    <p><strong>Descuento:</strong> {{ precio.discount_percent }}%</p>
-                {% endif %}
-
-                <!-- Botón para agregar al carrito -->
-                <form method="post" action="#">
-                    {% csrf_token %}
-                    <input type="hidden" name="nombre" value="{{ nombre }}">
-                    <input type="hidden" name="precio" value="{{ precio.final|floatformat:2 }}">
-                    <button type="submit" class="btn btn-primary">Agregar al carrito</button>
-                </form>
+        {% if juego.video %}
+            <div class="mt-3">
+                <p><strong>Video:</strong></p>
+                <div class="ratio ratio-16x9">
+                    <iframe src="{{ juego.video }}" title="Video del juego" allowfullscreen></iframe>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
