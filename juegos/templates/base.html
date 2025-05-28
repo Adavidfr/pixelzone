@@ -10,7 +10,11 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'lista_juegos' %}">PixelZone</a>
             <div>
-                <a class="btn btn-outline-light" href="{% url 'agregar_juego' %}">Agregar Juego</a>
+                <a class="btn btn-outline-light" href="{% url 'agregar_juego' %}">Agregar</a>
+
+                {% if juego %}
+                    <a class="btn btn-warning ms-2" href="{% url 'editar_juego' juego.id %}">Editar</a>
+                {% endif %}
             </div>
         </div>
     </nav>
