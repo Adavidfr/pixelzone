@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'juegos',
     'steamapp',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
