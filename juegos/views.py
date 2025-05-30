@@ -5,7 +5,11 @@ from .forms import JuegoForm
 
 def lista_juegos(request):
     juegos = Juego.objects.all()
-    return render(request, 'lista_juegos.html', {'juegos': juegos})
+    return render(request, 'lista_juegos.html', {
+        'juegos': juegos,
+        'mostrar_boton_agregar': True
+    })
+
 
 def agregar_juego(request):
     if request.method == 'POST':
@@ -38,3 +42,12 @@ def editar_juego(request, id):
         'form': form,
         'juego': juego,
     })
+
+def eliminar_juego(request, id):
+    juego = get_object_or_404(Juego, id=id)
+    
+    if request.method == 'POST':
+        juego.delete()
+        return redirect('lista_juegos')
+
+    return render(request, 'confirmar_eliminacion.html', {'juego': juego})
