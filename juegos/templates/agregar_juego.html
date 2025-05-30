@@ -1,24 +1,23 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
 <h2>Agregar Juego</h2>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data" class="pb-5">
     {% csrf_token %}
-    <div class="mb-3"><label class="form-label">Nombre</label><input type="text" name="nombre" class="form-control" required></div>
-    <div class="mb-3"><label class="form-label">Precio</label><input type="number" step="0.01" name="precio" class="form-control" required></div>
-    <div class="mb-3"><label class="form-label">Imagen Miniatura (URL)</label><input type="url" name="imagen_miniatura" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Imagen Principal (URL)</label><input type="url" name="imagen_principal" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Imagen 2 (URL)</label><input type="url" name="imagen2" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Imagen 3 (URL)</label><input type="url" name="imagen3" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Imagen 4 (URL)</label><input type="url" name="imagen4" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Imagen 5 (URL)</label><input type="url" name="imagen5" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Video (URL)</label><input type="url" name="video" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Descripción</label><textarea name="descripcion" class="form-control" rows="3"></textarea></div>
-    <div class="mb-3"><label class="form-label">Fecha de Lanzamiento</label><input type="date" name="fecha_lanzamiento" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Desarrollador</label><input type="text" name="desarrollador" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Género</label><input type="text" name="genero" class="form-control"></div>
-    <div class="mb-3"><label class="form-label">Descuento (%)</label><input type="number" name="descuento" class="form-control"></div>
+
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field|add_class:"form-control" }}
+            {% if field.errors %}
+                <div class="text-danger small">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
     <button type="submit" class="btn btn-primary">Guardar</button>
 </form>
-
 {% endblock %}
