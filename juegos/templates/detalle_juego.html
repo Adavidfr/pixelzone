@@ -1,39 +1,59 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6">
-        <h2>{{ juego.nombre }}</h2>
-        <p><strong>Desarrollador:</strong> {{ juego.desarrollador }}</p>
-        <p><strong>Género:</strong> {{ juego.genero }}</p>
-        <p><strong>Fecha de lanzamiento:</strong> {{ juego.fecha_lanzamiento }}</p>
-        <p><strong>Precio:</strong> ${{ juego.precio }}</p>
-        {% if juego.descuento > 0 %}
-            <p><strong>Descuento:</strong> {{ juego.descuento }}%</p>
-        {% endif %}
-        <p><strong>Descripción:</strong></p>
-        <p>{{ juego.descripcion }}</p>
-    </div>
+<div class="container my-5">
+  <div class="row g-4 pt-0 px-2 pb-3 rounded" style="border-radius: 6%; background-color: #1a1c2c;">
 
+    <h2 class="fw-bold">{{ juego.nombre }}</h2>
+    
+    <!-- Columna izquierda: Video + galería -->
     <div class="col-md-6">
-        {% if juego.imagen_principal %}
-            <img src="{{ juego.imagen_principal }}" class="img-fluid mb-2" alt="Imagen principal">
-        {% endif %}
+      {% if juego.video %}
+        {% with juego.video|cut:'watch?v='|add:'embed/' as video_embed_url %}
+          <div class="ratio ratio-16x9 mb-3">
+            <iframe src="{{ video_embed_url }}" title="Video del juego" allowfullscreen></iframe>
+          </div>
+        {% endwith %}
+      {% endif %}
 
-        <div class="d-flex flex-wrap gap-2">
-            {% for img in imagenes_extra %}
-                <img src="{{ img }}" class="img-thumbnail" style="width: 100px; height: auto;" alt="Extra">
-            {% endfor %}
+      <div class="d-flex justify-content-between flex-wrap">
+        {% if juego.imagen2 %}<img src="{{ juego.imagen2 }}" style="width: 148px;">{% endif %}
+        {% if juego.imagen3 %}<img src="{{ juego.imagen3 }}" style="width: 148px;">{% endif %}
+        {% if juego.imagen4 %}<img src="{{ juego.imagen4 }}" style="width: 148px;">{% endif %}
+        {% if juego.imagen5 %}<img src="{{ juego.imagen5 }}" style="width: 148px;">{% endif %}
+      </div>
+
+      {% if user.is_superuser %}
+        <div class="mt-3">
+          <a href="{% url 'editar_juego' juego.id %}" class="btn btn-warning me-2">Editar</a>
+          <a href="{% url 'eliminar_juego' juego.id %}" class="btn btn-danger">Eliminar</a>
         </div>
-
-        {% if juego.video %}
-            <div class="mt-3">
-                <p><strong>Video:</strong></p>
-                <div class="ratio ratio-16x9">
-                    <iframe src="{{ juego.video }}" title="Video del juego" allowfullscreen></iframe>
-                </div>
-            </div>
-        {% endif %}
+      {% endif %}
     </div>
+
+    <!-- Columna derecha: Detalles -->
+    <div class="col-md-6">
+      {% if juego.imagen_principal %}
+        <img src="{{ juego.imagen_principal }}" class="img-fluid" alt="Imagen principal del juego" id="imagen-juego">
+      {% endif %}
+
+      <p class="descripcion-juego  my-3">{{ juego.descripcion }}</p>     
+
+      <div class="d-flex flex-column" style="gap: 0; line-height: 1.5;">
+        <p class="mb-0"><strong class="text-primary">Desarrollador:</strong> {{ juego.desarrollador }}</p>
+        <p class="mb-0"><strong class="text-primary">Género:</strong> {{ juego.genero }}</p>
+        <p class="mb-0"><strong class="text-primary">Fecha de lanzamiento:</strong> {{ juego.fecha_lanzamiento|date:"M d, Y" }}</p>
+      </div>
+
+      <div class="d-flex align-items-center mt-4">
+        <a href="#" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
+            <span class="fw-bold">Añadir al carrito</span>
+            <span class="fs-6">${{ juego.precio }}</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
 </div>
+
 {% endblock %}
