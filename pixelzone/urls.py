@@ -19,8 +19,12 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 urlpatterns = [
+    path('', lambda request: redirect('/usuarios/login/')),
     path('admin/', admin.site.urls),
+     path('usuarios/', include('usuarios.urls')),
+    path('juegos/', include('juegos.urls')),
     path('', include('juegos.urls')),
     path('steam_buscar/', lambda request: redirect('buscar_juegos')),  # Redirige a la vista de buscar
     path('steam/', include('steamapp.urls')),
+    path('usuarios/', include('usuarios.urls')),
 ]
