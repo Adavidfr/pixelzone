@@ -7,17 +7,46 @@
     <a href="{% url 'agregar_juego' %}" class="btn btn-primary mb-3">Agregar juego</a>
 {% endif %}
 
-<form method="get" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="q" class="form-control" placeholder="Buscar juego..." value="{{ consulta }}">
-        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+<form method="get" class="d-flex justify-content-between align-items-center mb-4 gap-2">
+
+    <div class="dropdown">
+        <button class="btn dropdown-toggle px-3" type="button" id="dropdownCategoria" data-bs-toggle="dropdown" aria-expanded="false"
+                style="background-color: #17506E; color: #E8EAF2; border: none;">
+            {% if request.GET.genero %}
+                {% for clave, valor in form.fields.genero.choices %}
+                    {% if request.GET.genero == clave %}
+                        {{ valor }}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                Categoría
+            {% endif %}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownCategoria">
+            <li><a class="dropdown-item" href="?{% if consulta %}q={{ consulta }}{% endif %}">Todas</a></li>
+            {% for clave, valor in form.fields.genero.choices %}
+                <li>
+                    <a class="dropdown-item" href="?genero={{ clave }}{% if consulta %}&q={{ consulta }}{% endif %}">
+                        {{ valor }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+   
+    <div class="input-group" style="max-width: 350px;">
+        <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ consulta }}" 
+               style="background-color: #17506E; color: #E8EAF2; border: none;">
+        <button class="btn" type="submit" style="background-color: #17506E; color: #E8EAF2;">Buscar</button>
     </div>
 </form>
+
+
 
 <div class="row">
     {% for juego in juegos %}
         <div class="col-md-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 tarjeta-hover" style="background-color: #1a1c2c; color: #E8EAF2;">
                 <a href="{% url 'detalle_juego' juego.id %}">
                     {% if juego.imagen_miniatura %}
                         <img src="{{ juego.imagen_miniatura }}" class="card-img-top" alt="{{ juego.nombre }}">

@@ -46,10 +46,11 @@
       </div>
 
       <div class="d-flex align-items-center mt-4">
-        <a href="#" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
-            <span class="fw-bold">Añadir al carrito</span>
-            <span class="fs-6">${{ juego.precio }}</span>
-        </a>
+          <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
+              <span class="fw-bold">Añadir al carrito</span>
+              <span class="fs-6">${{ juego.precio }}</span>
+          </a>
+      </div>
       </div>
 
     </div>
