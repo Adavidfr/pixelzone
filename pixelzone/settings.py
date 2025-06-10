@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'juegos',
     'steamapp',
     'widget_tweaks',
+    'tienda',
 ]
 
 MIDDLEWARE = [
