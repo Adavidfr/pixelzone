@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{# todo esto esta cambiado #}
+
+{% block content %}
+<h1>Administrar Compras</h1>
+
+{% if compras %}
+    <div class="accordion" id="accordionCompras">
+    {% for compra in compras %}
+        <div class="accordion-item mb-3">
+            <h2 class="accordion-header" id="heading{{ compra.id }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ compra.id }}" aria-expanded="false" aria-controls="collapse{{ compra.id }}">
+                    Compra #{{ compra.id }} - {{ compra.fecha|date:"d/m/Y H:i" }} - Total: ${{ compra.total }}
+                </button>
+            </h2>
+            <div id="collapse{{ compra.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ compra.id }}" data-bs-parent="#accordionCompras">
+                <div class="accordion-body">
+                    <p><strong>Usuario:</strong> {{ compra.usuario.username }} | <strong>Email:</strong> {{ compra.usuario.email }}</p>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Juego</th>
+                                <th>Precio Unitario</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for detalle in compra.detallecompra_set.all %}
+                            <tr>
+                                <td>{{ detalle.juego.nombre }}</td>
+                                <td>${{ detalle.precio_unitario }}</td>
+                                <td>${{ detalle.precio_unitario }}</td> {# Sin cantidad, total = precio #}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" class="text-end">Total:</th>
+                                <th>${{ compra.total }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+              
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p>No hay compras registradas.</p>
+{% endif %}
+
+{% endblock %}

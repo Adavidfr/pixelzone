@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Compras realizadas</h2>
+
+<!-- Botón para administrar compras -->
+<div class="mb-4">
+    <a href="{% url 'administrar_compras' %}" class="btn btn-primary">
+        Administrar Compras
+    </a>
+</div>
+
+{% for compra in compras %}
+  <div class="border p-3 mb-4">
+    <p><strong>Compra ID:</strong> {{ compra.id }}</p>
+    <p><strong>Usuario:</strong> {{ compra.usuario.username }}</p>
+    <p><strong>Correo:</strong> {{ compra.usuario.email }}</p>
+    <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+    <p><strong>Total:</strong> ${{ compra.total }}</p>
+
+    <h4>Detalle de la compra:</h4>
+    {% if compra.detallecompra_set.exists %}
+      <ul>
+        {% for detalle in compra.detallecompra_set.all %}
+          <li>
+            <strong>Juego:</strong> {{ detalle.juego.nombre }}<br>
+            <strong>Precio unitario:</strong> ${{ detalle.precio_unitario }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hay juegos en esta compra.</p>
+    {% endif %}
+  </div>
+{% endfor %}
+{% endblock %}

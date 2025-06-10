@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Tu Carrito</h1>
+
+{% if items %}
+    <ul>
+        {% for item in items %}
+            <li>
+                <strong>{{ item.juego.nombre }}</strong><br>
+                Cantidad: {{ item.cantidad }}<br>
+                Precio unitario: ${{ item.juego.precio }}<br>
+                Subtotal: ${{ item.juego.precio|floatformat:2|add:item.juego.precio|floatformat:2 }}<br>
+                
+                <form action="{% url 'eliminar_del_carrito' item.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Eliminar</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Total:</strong> ${{ total }}</p>
+
+    <form action="{% url 'confirmar_compra' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Confirmar compra</button>
+    </form>
+
+{% else %}
+    <p>Tu carrito está vacío.</p>
+{% endif %}
+{% endblock %}

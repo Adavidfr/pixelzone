@@ -1,0 +1,37 @@
+<!-- templates/factura.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Factura de compra</h1>
+
+<p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+<p><strong>Correo electrónico:</strong> {{ email }}</p>
+<p><strong>Total:</strong> ${{ compra.total }}</p>
+<p><strong>Estado:</strong> {{ compra.get_estado_display }}</p>
+
+
+<table class="table table-bordered mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Juego</th>
+            <th>Precio Unitario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in detalles %}
+        <tr>
+            <td>{{ detalle.juego.nombre }}</td>
+            <td>${{ detalle.precio_unitario }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="text-center mt-5">
+    <p class="fw-bold">¡Gracias por confiar en PixelZone!</p>
+    <p>Los códigos de tus juegos se enviarán al correo <strong>{{ email }}</strong>.</p>
+    <p>Esperamos verte nuevamente pronto 🎮</p>
+</div>
+
+<a href="{% url 'lista_juegos' %}" class="btn btn-primary mt-3">Seguir comprando</a>
+{% endblock %}
