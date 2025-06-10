@@ -7,22 +7,28 @@ from django.db.models import Q, Case, When, IntegerField
 
 def lista_juegos(request):
     consulta = request.GET.get('q', '')
+    genero = request.GET.get('genero', '')
+
+    juegos = Juego.objects.all()
+
     if consulta:
-        # Crear una expresión que da prioridad a los juegos cuyo nombre empieza con la consulta
-        juegos = Juego.objects.annotate(
+        juegos = juegos.annotate(
             prioridad=Case(
                 When(nombre__istartswith=consulta, then=0),
                 default=1,
                 output_field=IntegerField(),
             )
         ).filter(nombre__icontains=consulta).order_by('prioridad', 'nombre')
-    else:
-        juegos = Juego.objects.all()
-    
+
+    if genero:
+        juegos = juegos.filter(genero=genero)
+
     return render(request, 'lista_juegos.html', {
         'juegos': juegos,
         'mostrar_boton_agregar': request.user.is_superuser,
         'consulta': consulta,
+        'genero': genero,
+        'form': JuegoForm(),  # 👈 para usar los choices de género en el template
     })
 
 def solo_admin(user):
