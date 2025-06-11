@@ -4,12 +4,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.db import transaction
+from django.db import models
 
 from .models import Carrito, ItemCarrito, Compra, DetalleCompra
 from juegos.models import Juego
-
-
-# Lo puse en orden actualizado
 
 # -----------------------------
 # FUNCIONES PARA USUARIOS AUTENTICADOS
@@ -124,3 +122,21 @@ def administrar_compras(request):
         return redirect('administrar_compras')
 
     return render(request, 'administrar_compras.html', {'compras': compras})
+
+def mas_vendidos(request):
+    top_juegos = (DetalleCompra.objects
+                  .values('juego')
+                  .annotate(total_vendidos=models.Count('id'))
+                  .order_by('-total_vendidos')[:10])
+
+    juegos = []
+    for posicion, item in enumerate(top_juegos, start=1):
+        juego = Juego.objects.get(id=item['juego'])
+        juegos.append({
+            'posicion': posicion,
+            'juego': juego,
+            'total_vendidos': item['total_vendidos']
+        })
+
+    return render(request, 'mas_vendidos.html', {'juegos': juegos})
+
