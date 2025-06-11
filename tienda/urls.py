@@ -11,6 +11,6 @@ urlpatterns = [
     path('compras/', views.ver_compras, name='ver_compras'),  # Página pública para el admin
     path('admin/compras/', views.administrar_compras, name='administrar_compras'),# Estado + enlace
     path('admin/compras/factura/<int:compra_id>/', views.ver_factura_admin, name='ver_factura_admin'), #---- agregado
-    path('admin/compras/', views.administrar_compras, name='administrar_compras')
-
+    path('admin/compras/', views.administrar_compras, name='administrar_compras'),
+    path('mas-vendidos/', views.mas_vendidos, name='mas_vendidos')
 ]
