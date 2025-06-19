@@ -16,7 +16,7 @@ PixelZone es una tienda virtual de videojuegos inspirada en Steam, desarrollada 
 1. **Clona el repositorio**
 
    ```sh
-   git clone <https://github.com/Adavidfr/pixelzone.git>
+   git clone https://github.com/Adavidfr/pixelzone.git
    cd pixelzone
    ```
 
