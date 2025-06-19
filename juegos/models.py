@@ -27,7 +27,7 @@ class Juego(models.Model):
     descripcion = models.TextField()
     fecha_lanzamiento = models.DateField()
     desarrollador = models.CharField(max_length=100)
-    genero = models.CharField(max_length=50, choices=GENEROS)  # 👈 Aquí el cambio
+    genero = models.CharField(max_length=50, choices=GENEROS)
     descuento = models.IntegerField()
 
     def __str__(self):
