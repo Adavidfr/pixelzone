@@ -28,7 +28,7 @@ def lista_juegos(request):
         'mostrar_boton_agregar': request.user.is_superuser,
         'consulta': consulta,
         'genero': genero,
-        'form': JuegoForm(),  # 👈 para usar los choices de género en el template
+        'form': JuegoForm(), 
     })
 
 def solo_admin(user):

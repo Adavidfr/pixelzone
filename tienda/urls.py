@@ -8,9 +8,9 @@ urlpatterns = [
     path('carrito/confirmar/', views.confirmar_compra, name='confirmar_compra'),
     path('carrito/eliminar/<int:item_id>/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
     path('factura/<int:compra_id>/', views.ver_factura, name='ver_factura'),
-    path('compras/', views.ver_compras, name='ver_compras'),  # Página pública para el admin
-    path('admin/compras/', views.administrar_compras, name='administrar_compras'),# Estado + enlace
-    path('admin/compras/factura/<int:compra_id>/', views.ver_factura_admin, name='ver_factura_admin'), #---- agregado
+    path('compras/', views.ver_compras, name='ver_compras'), 
+    path('admin/compras/', views.administrar_compras, name='administrar_compras'),
+    path('admin/compras/factura/<int:compra_id>/', views.ver_factura_admin, name='ver_factura_admin'), 
     path('admin/compras/', views.administrar_compras, name='administrar_compras'),
     path('mas-vendidos/', views.mas_vendidos, name='mas_vendidos')
 ]

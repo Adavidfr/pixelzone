@@ -6,7 +6,7 @@ def buscar_juegos_view(request):
     juegos = []
 
     if query:
-        juegos = buscar_juegos(query)  # Usa tu servicio de API directamente
+        juegos = buscar_juegos(query)
 
     return render(request, 'resultados_busqueda.html', {
         'query': query,

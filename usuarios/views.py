@@ -16,7 +16,7 @@ def registro(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('lista_juegos')  # Cambia aquí a la vista principal
+            return redirect('lista_juegos')
     else:
         form = RegistroUsuarioForm()
     return render(request, 'usuarios/registro.html', {'form': form})
@@ -27,7 +27,7 @@ def ingreso(request):
         if form.is_valid():
             usuario = form.get_user()
             login(request, usuario)
-            return redirect('lista_juegos')  # Redirige a la vista principal
+            return redirect('lista_juegos')
     else:
         form = AuthenticationForm()
     
