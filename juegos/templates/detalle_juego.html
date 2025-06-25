@@ -6,23 +6,65 @@
 
     <h2 class="fw-bold">{{ juego.nombre }}</h2>
     
-    <!-- Columna izquierda: Video + galería -->
+    <!-- Columna izquierda: Video o imagen principal + galería -->
     <div class="col-md-6">
+
+      <!-- Contenedor del video grande -->
       {% if juego.video %}
-        {% with juego.video|cut:'watch?v='|add:'embed/' as video_embed_url %}
-          <div class="ratio ratio-16x9 mb-3">
-            <iframe src="{{ video_embed_url }}" title="Video del juego" allowfullscreen></iframe>
-          </div>
-        {% endwith %}
+        <div class="ratio ratio-16x9 mb-3" id="video-container" style="display: block;">
+          <video id="video-juego" controls style="width: 100%; height: 100%;">
+            <source src="{{ juego.video }}" type="video/webm">
+            Tu navegador no soporta video HTML5.
+          </video>
+        </div>
       {% endif %}
 
-      <div class="d-flex justify-content-between flex-wrap">
-        {% if juego.imagen2 %}<img src="{{ juego.imagen2 }}" style="width: 148px;">{% endif %}
-        {% if juego.imagen3 %}<img src="{{ juego.imagen3 }}" style="width: 148px;">{% endif %}
-        {% if juego.imagen4 %}<img src="{{ juego.imagen4 }}" style="width: 148px;">{% endif %}
-        {% if juego.imagen5 %}<img src="{{ juego.imagen5 }}" style="width: 148px;">{% endif %}
+      <!-- Contenedor de la imagen grande (oculto inicialmente si hay video) -->
+      <div id="imagen-container" class="mb-3 {% if juego.video %}d-none{% endif %}">
+              <img src="{{ juego.imagen_principal|default:'' }}" id="imagen-juego" class="img-fluid" alt="Imagen del juego">
+            </div>
+
+            <!-- Galería de miniaturas: video + imágenes -->
+            <div class="d-flex justify-content-start flex-nowrap mt-2 overflow-auto">
+        {% if juego.video %}
+          <div class="miniatura-video-wrapper me-2">
+            <video class="miniatura"
+                  muted
+                  preload="metadata"
+                  playsinline
+                  poster="{{ juego.imagen_principal|default:'' }}">
+              <source src="{{ juego.video }}" type="video/webm">
+            </video>
+          <div class="play-icon"></div>
+        </div>
+        {% else %}
+          <div class="miniatura-video-wrapper me-2 d-none">
+            <video class="miniatura" muted preload="metadata" playsinline>
+              <source src="" type="video/webm">
+            </video>
+            <div class="play-icon"></div>
+          </div>
+        {% endif %}
+        {% if juego.imagen1 %}
+          <img src="{{ juego.imagen1 }}" class="miniatura flex-shrink-0 me-2" style="width: 148px; cursor: pointer;">
+
+
+        {% endif %}
+        {% if juego.imagen2 %}
+          <img src="{{ juego.imagen2 }}" class="miniatura flex-shrink-0 me-2" style="width: 148px; cursor: pointer;">
+        {% endif %}
+        {% if juego.imagen3 %}
+          <img src="{{ juego.imagen3 }}" class="miniatura flex-shrink-0 me-2" style="width: 148px; cursor: pointer;">
+        {% endif %}
+        {% if juego.imagen4 %}
+          <img src="{{ juego.imagen4 }}" class="miniatura flex-shrink-0 me-2" style="width: 148px; cursor: pointer;">
+        {% endif %}
+        {% if juego.imagen5 %}
+          <img src="{{ juego.imagen5 }}" class="miniatura flex-shrink-0" style="width: 148px; cursor: pointer;">
+        {% endif %}
       </div>
 
+      <!-- Botones de administrador -->
       {% if user.is_superuser %}
         <div class="mt-3">
           <a href="{% url 'editar_juego' juego.id %}" class="btn btn-warning me-2">Editar</a>
@@ -33,11 +75,7 @@
 
     <!-- Columna derecha: Detalles -->
     <div class="col-md-6">
-      {% if juego.imagen_principal %}
-        <img src="{{ juego.imagen_principal }}" class="img-fluid" alt="Imagen principal del juego" id="imagen-juego">
-      {% endif %}
-
-      <p class="descripcion-juego  my-3">{{ juego.descripcion }}</p>     
+      <p class="descripcion-juego my-3">{{ juego.descripcion }}</p>     
 
       <div class="d-flex flex-column" style="gap: 0; line-height: 1.5;">
         <p class="mb-0"><strong class="text-primary">Desarrollador:</strong> {{ juego.desarrollador }}</p>
@@ -46,15 +84,51 @@
       </div>
 
       <div class="d-flex align-items-center mt-4">
-          <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
-              <span class="fw-bold">Añadir al carrito</span>
-              <span class="fs-6">${{ juego.precio }}</span>
-          </a>
+        <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
+          <span class="fw-bold">Añadir al carrito</span>
+          <span class="fs-6">${{ juego.precio }}</span>
+        </a>
       </div>
-      </div>
-
     </div>
+
   </div>
 </div>
+
+<!-- Script para manejo de miniaturas -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const miniaturas = document.querySelectorAll('.miniatura');
+    const imagenGrande = document.getElementById('imagen-juego');
+    const imagenContainer = document.getElementById('imagen-container');
+    const videoContainer = document.getElementById('video-container');
+    const videoGrande = document.getElementById('video-juego');
+
+    miniaturas.forEach(miniatura => {
+      miniatura.addEventListener('click', function () {
+        if (this.tagName.toLowerCase() === 'video') {
+          // Miniatura video clickeada
+          if (videoContainer) videoContainer.style.display = 'block';
+          if (imagenContainer) imagenContainer.classList.add('d-none');
+
+          if (videoGrande) {
+            videoGrande.pause();
+            videoGrande.currentTime = 0;
+            videoGrande.src = this.querySelector('source').src;
+            videoGrande.load();
+            videoGrande.play();
+          }
+        } else if (this.tagName.toLowerCase() === 'img') {
+          // Miniatura imagen clickeada
+          if (imagenGrande) {
+            imagenGrande.setAttribute('src', this.getAttribute('src'));
+          }
+          if (videoContainer) videoContainer.style.display = 'none';
+          if (imagenContainer) imagenContainer.classList.remove('d-none');
+          if (videoGrande) videoGrande.pause();
+        }
+      });
+    });
+  });
+</script>
 
 {% endblock %}
