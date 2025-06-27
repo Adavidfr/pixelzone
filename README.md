@@ -1,6 +1,20 @@
 # PixelZone
 
-PixelZone es una tienda virtual de videojuegos inspirada en Steam, desarrollada con Django. Permite a los usuarios explorar, buscar y comprar juegos, así como a los administradores gestionar el catálogo y las compras. Incluye integración con la API de Steam para búsqueda de juegos y un sistema de carrito de compras.
+PixelZone es una tienda virtual de videojuegos, desarrollada con Django. Permite a los usuarios explorar, buscar y comprar juegos, así como a los administradores gestionar el catálogo y las compras. Incluye integración con la API de Steam para búsqueda de juegos y un sistema de carrito de compras.
+
+## Vista previa
+
+### Página principal – Lista de juegos
+
+![Lista de juegos](assets/lista.png)
+
+### Vista de detalle de un juego
+
+![Detalle del juego](assets/detalle.png)
+
+### Página de inicio de sesión
+
+![Login](assets/login.png)
 
 ## Características principales
 
