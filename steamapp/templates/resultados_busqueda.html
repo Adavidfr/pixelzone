@@ -1,26 +1,29 @@
-{% extends 'base2.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container my-4">
-    <h1>Resultados de la búsqueda para "{{ query }}"</h1>
+<h1 class="mb-4">Resultados para "{{ query }}"</h1>
 
-    {% if juegos %}
-        <div class="row g-4">
-            {% for juego in juegos %}
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <img src="{{ juego.img }}" class="card-img-top img-fluid" alt="{{ juego.name }}" style="height: 200px; object-fit: cover;">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ juego.name }}</h5>
-                            <p class="card-text">{{ juego.price|default:"Gratis" }}</p>
-                            <a href="{{ juego.link }}" target="_blank" class="btn btn-primary mt-auto">Ver en Steam</a>
-                        </div>
+<form method="get" class="input-group mb-4" style="max-width: 400px;">
+    <input type="text" name="query" class="form-control" placeholder="Buscar juegos en Steam..." value="{{ query }}" style="background-color: #17506E; color: #E8EAF2; border: none;">
+    <button class="btn" type="submit" style="background-color: #17506E; color: #E8EAF2;">Buscar</button>
+</form>
+
+<div class="row">
+    {% for juego in juegos %}
+        {% if juego.appid %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 tarjeta-hover" style="background-color: #1a1c2c; color: #E8EAF2;">
+                    <a href="{% url 'detalle_juego_steam' juego.appid %}">
+                        <img src="{{ juego.img }}" class="card-img-top" alt="{{ juego.name }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 1rem;">{{ juego.name }}</h5>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No se encontraron juegos para "{{ query }}".</p>
-    {% endif %}
+            </div>
+        {% endif %}
+    {% empty %}
+        <p>No se encontraron juegos para esta búsqueda.</p>
+    {% endfor %}
 </div>
 {% endblock %}
