@@ -75,6 +75,9 @@
 
     <!-- Columna derecha: Detalles -->
     <div class="col-md-6">
+
+      <img src="{{ juego.imagen_principal|default:'' }}" id="imagen-juego" class="img-fluid" alt="Imagen del juego">
+
       <p class="descripcion-juego my-3">{{ juego.descripcion }}</p>     
 
       <div class="d-flex flex-column" style="gap: 0; line-height: 1.5;">
@@ -86,7 +89,14 @@
       <div class="d-flex align-items-center mt-4">
         <a href="{% url 'agregar_al_carrito' juego.id %}" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
           <span class="fw-bold">Añadir al carrito</span>
-          <span class="fs-6">${{ juego.precio }}</span>
+          {% if juego.descuento > 0 %}
+            <span class="fs-6">
+              <s>${{ juego.precio }}</s>
+              ${{ juego.precio_con_descuento|floatformat:2 }}
+            </span>
+          {% else %}
+            <span class="fs-6">${{ juego.precio }}</span>
+          {% endif %}
         </a>
       </div>
     </div>
