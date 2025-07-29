@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.shortcuts import redirect
 
 urlpatterns = [
-path('', lambda request: redirect('/usuarios/login/')),
+path('', lambda request: redirect('/juegos/')),
     path('admin/', admin.site.urls),
 
     # Apps principales
@@ -27,10 +27,4 @@ path('', lambda request: redirect('/usuarios/login/')),
     path('juegos/', include('juegos.urls')),
     path('steam/', include('steamapp.urls')),
     path('tienda/', include('tienda.urls')),
-
-    # Rutas adicionales / redirecciones
-    path('steam_buscar/', lambda request: redirect('buscar_juegos')),  # Redirige a la vista de buscar
-    
-    # Evitar rutas duplicadas o superpuestas
-    # path('', include('juegos.urls')),  # <- Comentada porque ya tienes '' redirigiendo a login
 ]
