@@ -25,6 +25,6 @@ path('', lambda request: redirect('/juegos/')),
     # Apps principales
     path('usuarios/', include('usuarios.urls')),
     path('juegos/', include('juegos.urls')),
-    path('steam/', include('steamapp.urls')),
+    path('api/', include('steamapp.urls')),
     path('tienda/', include('tienda.urls')),
 ]
