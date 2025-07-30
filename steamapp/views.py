@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .steam_service import buscar_juegos
+from .steam_service import buscar_juegos, obtener_juegos_populares
 import requests
 from decimal import Decimal
 
@@ -11,7 +11,28 @@ def buscar_juegos_view(request):
         'juegos': juegos,
     })
 
-def detalle_juego_steam_view(request, appid):
+def juegos_populares_view(request):
+    """
+    Vista para mostrar los juegos más populares de Steam
+    """
+    query = request.GET.get('query', '')
+    
+    if query:
+        # Si hay búsqueda, usar la función de búsqueda existente
+        juegos = buscar_juegos(query)
+        titulo = f"Resultados para '{query}'"
+    else:
+        # Si no hay búsqueda, mostrar juegos populares
+        juegos = obtener_juegos_populares()
+        titulo = "Tienda"
+    
+    return render(request, 'juegos_populares.html', {
+        'juegos': juegos,
+        'titulo': titulo,
+        'query': query,
+    })
+
+def detalle_juego_api_view(request, appid):
     url = f"https://store.steampowered.com/api/appdetails?appids={appid}&cc=us&l=spanish"
     response = requests.get(url)
     data = response.json()
@@ -43,4 +64,4 @@ def detalle_juego_steam_view(request, appid):
         'descuento': descuento,
     }
 
-    return render(request, 'detalle_juego_steam.html', {'juego': juego})
+    return render(request, 'detalle_juego_api.html', {'juego': juego})
