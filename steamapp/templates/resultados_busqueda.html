@@ -13,7 +13,7 @@
         {% if juego.appid %}
             <div class="col-md-3 mb-4">
                 <div class="card h-100 tarjeta-hover" style="background-color: #1a1c2c; color: #E8EAF2;">
-                    <a href="{% url 'detalle_juego_steam' juego.appid %}">
+                    <a href="{% url 'detalle_juego_api' juego.appid %}">
                         <img src="{{ juego.img }}" class="card-img-top" alt="{{ juego.name }}">
                     </a>
                     <div class="card-body">
