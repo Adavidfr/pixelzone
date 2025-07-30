@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row g-4 pt-0 px-2 pb-3 rounded" style="border-radius: 6%; background-color: #1a1c2c;">
+
+    <h2 class="fw-bold">{{ juego.nombre }}</h2>
+    
+    <!-- Columna izquierda: Video o imagen principal + galería -->
+    <div class="col-md-6">
+
+      <!-- Contenedor del video grande -->
+      {% if juego.video %}
+        <div class="ratio ratio-16x9 mb-3" id="video-container" style="display: block;">
+          <video id="video-juego" controls style="width: 100%; height: 100%;">
+            <source src="{{ juego.video }}" type="video/webm">
+            Tu navegador no soporta video HTML5.
+          </video>
+        </div>
+      {% endif %}
+
+      <!-- Contenedor de la imagen grande (oculto inicialmente si hay video) -->
+      <div id="imagen-container" class="mb-3 {% if juego.video %}d-none{% endif %}">
+        <img src="{{ juego.imagen_principal|default:'' }}" id="imagen-juego" class="img-fluid" alt="Imagen del juego">
+      </div>
+
+      <!-- Galería de miniaturas: video + screenshots -->
+      <div class="d-flex justify-content-start flex-nowrap mt-2 overflow-auto">
+        {% if juego.video %}
+          <div class="miniatura-video-wrapper me-2" style="position: relative; cursor: pointer;">
+            <video class="miniatura"
+                   muted
+                   preload="metadata"
+                   playsinline
+                   poster="{{ juego.imagen_principal|default:'' }}"
+                   style="width: 148px;">
+              <source src="{{ juego.video }}" type="video/webm">
+            </video>
+            <div class="play-icon" ></div>
+          </div>
+        {% endif %}
+
+        {% for shot in juego.screenshots %}
+          <img src="{{ shot.path_full }}" class="miniatura flex-shrink-0 me-2" style="width: 148px; cursor: pointer;" alt="Miniatura {{ forloop.counter }}">
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- Columna derecha: Detalles -->
+    <div class="col-md-6">
+      <img src="{{ juego.imagen_principal|default:'' }}" id="imagen-juego" class="img-fluid" alt="Imagen del juego">
+      <p class="descripcion-juego my-3">{{ juego.descripcion_corta }}</p>  
+
+      <div class="d-flex flex-column" style="gap: 0; line-height: 1.5;">
+        <p class="mb-0"><strong class="text-primary">Desarrollador:</strong> {{ juego.desarrollador }}</p>
+        <p class="mb-0"><strong class="text-primary">Género:</strong> {{ juego.genero }}</p>
+        <p class="mb-0"><strong class="text-primary">Fecha de lanzamiento:</strong> {{ juego.fecha_lanzamiento }}</p>
+      </div>
+
+      <div class="d-flex align-items-center mt-4">
+        <a href="#" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
+          <span class="fw-bold">Añadir al carrito</span>
+          {% if juego.descuento > 0 %}
+            <span class="fs-6">
+              <s>{{ juego.precio }}</s>
+              {{ juego.precio_con_descuento }}
+            </span>
+          {% else %}
+            <span class="fs-6">{{ juego.precio }}</span>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Script para manejo de miniaturas -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const miniaturas = document.querySelectorAll('.miniatura');
+    const imagenGrande = document.getElementById('imagen-juego');
+    const imagenContainer = document.getElementById('imagen-container');
+    const videoContainer = document.getElementById('video-container');
+    const videoGrande = document.getElementById('video-juego');
+
+    miniaturas.forEach(miniatura => {
+      miniatura.addEventListener('click', function () {
+        if (this.tagName.toLowerCase() === 'video') {
+          if (videoContainer) videoContainer.style.display = 'block';
+          if (imagenContainer) imagenContainer.classList.add('d-none');
+
+          if (videoGrande) {
+            videoGrande.pause();
+            videoGrande.currentTime = 0;
+            videoGrande.src = this.querySelector('source').src;
+            videoGrande.load();
+            videoGrande.play();
+          }
+        } else if (this.tagName.toLowerCase() === 'img') {
+          if (imagenGrande) {
+            imagenGrande.setAttribute('src', this.getAttribute('src'));
+          }
+          if (videoContainer) videoContainer.style.display = 'none';
+          if (imagenContainer) imagenContainer.classList.remove('d-none');
+          if (videoGrande) videoGrande.pause();
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}
