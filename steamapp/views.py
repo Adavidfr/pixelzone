@@ -26,7 +26,7 @@ def juegos_populares_view(request):
         juegos = obtener_juegos_populares()
         titulo = "Tienda"
     
-    return render(request, 'juegos_populares.html', {
+    return render(request, 'lista_juegos_api.html', {
         'juegos': juegos,
         'titulo': titulo,
         'query': query,
