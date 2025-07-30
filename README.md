@@ -1,6 +1,15 @@
 # PixelZone
 
+[![Ver demo](https://img.shields.io/badge/Demo-en%20línea-blue?style=for-the-badge)](https://pixelzone.onrender.com)
+
 PixelZone es una tienda virtual de videojuegos, desarrollada con Django. Permite a los usuarios explorar, buscar y comprar juegos, así como a los administradores gestionar el catálogo y las compras. Incluye integración con la API de Steam para búsqueda de juegos y un sistema de carrito de compras.
+
+## 🌐 Demo en línea
+
+Puedes acceder a la aplicación desplegada en:  
+👉 [https://pixelzone.onrender.com](https://pixelzone.onrender.com)
+
+---
 
 ## Vista previa
 
