@@ -28,17 +28,6 @@ def buscar_juegos(query):
         print("ERROR EN BUSQUEDA:", e)
         return []
 
-
-    
-# def obtener_detalle_juego(appid):
-#     try:
-#         # Forzar cc=us para que venga el precio
-#         detalle = steam.apps.get_app_details(appid, cc='us')
-#         return detalle.get(str(appid), {}).get('data', {})
-#     except Exception as e:
-#         print("ERROR EN DETALLE:", e)
-#         return {}
-
 def obtener_detalle_juego(appid):
     try:
         detalle = steam.apps.get_app_details(appid)
