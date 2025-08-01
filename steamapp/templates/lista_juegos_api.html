@@ -36,42 +36,35 @@
                 <div class="card h-100 tarjeta-hover" style="background-color: #1a1c2c; color: #E8EAF2;">
                     <a href="{% url 'detalle_juego_api' juego.appid %}">
                         {% if juego.img %}
-                            <img src="{{ juego.img }}" class="card-img-top" alt="{{ juego.name }}" style="height: 200px; object-fit: cover;">
+                            <img src="{{ juego.img }}" class="card-img-top" alt="{{ juego.name }}">
                         {% else %}
                             <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Sin imagen">
                         {% endif %}
                     </a>
-                    
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title" style="font-size: 1rem; margin-bottom: 0.5rem;">{{ juego.name }}</h5>
-                        
-                        <!-- Información de precio y descuento -->
-                        <div class="mt-auto">
+
+                    <div class="card-body d-flex flex-column justify-content-end p-2">
+                        <!-- Precio compacto -->
+                        <div class="d-flex align-items-center gap-2" style="font-size: 0.9rem; color: #E8EAF2; padding: 2px 4px;">
                             {% if juego.discount_percent > 0 %}
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <span class="badge bg-danger">{{ juego.discount_percent }}% OFF</span>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="text-decoration-line-through text-muted" style="font-size: 0.9rem;">
-                                        ${{ juego.original_price|floatformat:2 }}
-                                    </span>
-                                    <span class="fw-bold text-success" style="font-size: 1.1rem;">
-                                        ${{ juego.final_price|floatformat:2 }}
-                                    </span>
-                                </div>
+                                <span class="badge bg-danger" style="font-size: 0.7rem;">{{ juego.discount_percent }}% OFF</span>
+                                <span class="text-decoration-line-through" style="color: #E8EAF2;">
+                                    ${{ juego.original_price|floatformat:2 }}
+                                </span>
+                                <span class="fw-bold" style="color: #E8EAF2; font-size: 0.95rem;">
+                                    ${{ juego.final_price|floatformat:2 }}
+                                </span>
                             {% else %}
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-bold" style="font-size: 1.1rem;">
-                                        {% if juego.final_price > 0 %}
-                                            ${{ juego.final_price|floatformat:2 }}
-                                        {% else %}
-                                            Gratis
-                                        {% endif %}
-                                    </span>
-                                </div>
+                                <span class="fw-bold" style="color: #E8EAF2; font-size: 0.95rem;">
+                                    {% if juego.final_price > 0 %}
+                                        ${{ juego.final_price|floatformat:2 }}
+                                    {% else %}
+                                        Gratis
+                                    {% endif %}
+                                </span>
                             {% endif %}
                         </div>
                     </div>
+
                 </div>
             </div>
         {% endif %}
@@ -103,4 +96,4 @@
         </nav>
     </div>
 {% endif %}
-{% endblock %} 
+{% endblock %}
