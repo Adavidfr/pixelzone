@@ -14,32 +14,41 @@ def buscar_juegos(query):
         search_response = steam.apps.search_games(query)
         juegos = search_response.get('apps', [])
 
+        juegos_actualizados = []
         for juego in juegos:
-            # Extraer appid como entero
-            juego['appid'] = juego.get('id', [None])[0]
-            juego['img'] = juego.get('img', "/static/img/no_image_available.png")
+            appid = juego.get('id', [None])[0]
+            if not appid:
+                continue
 
-        # Filtrar los juegos que tengan appid
-        juegos = [j for j in juegos if j.get('appid')]
+            detalle_url = f"https://store.steampowered.com/api/appdetails?appids={appid}&cc=us&l=spanish"
+            detalle_response = requests.get(detalle_url)
+            detalle_data = detalle_response.json().get(str(appid), {}).get('data', {})
 
-        return juegos
+            imagen_principal = detalle_data.get('header_image', "/static/img/no_image_available.png")
+
+            # Obtener info de precios
+            price_overview = detalle_data.get('price_overview', {})
+            precio_original_cents = price_overview.get('initial', 0)
+            precio_final_cents = price_overview.get('final', 0)
+            descuento = price_overview.get('discount_percent', 0)
+
+            precio_original = Decimal(precio_original_cents) / 100 if precio_original_cents else Decimal(0)
+            precio_final = Decimal(precio_final_cents) / 100 if precio_final_cents else Decimal(0)
+
+            juegos_actualizados.append({
+                'appid': appid,
+                'name': juego.get('name', 'Sin nombre'),
+                'img': imagen_principal,
+                'final_price': precio_final,
+                'original_price': precio_original,
+                'discount_percent': descuento,
+            })
+
+        return juegos_actualizados
 
     except Exception as e:
         print("ERROR EN BUSQUEDA:", e)
         return []
-
-def obtener_detalle_juego(appid):
-    try:
-        detalle = steam.apps.get_app_details(appid)
-        print("DETALLE CRUDO:", detalle)
-        app_data = detalle.get(str(appid), {})
-        if not app_data.get('success'):
-            print(f"API dice que no hay éxito para appid {appid}")
-            return {}
-        return app_data.get('data', {})
-    except Exception as e:
-        print("ERROR EN DETALLE:", e)
-        return {}
 
 def obtener_juegos_populares():
     """
@@ -50,7 +59,7 @@ def obtener_juegos_populares():
         response = requests.get(url)
         data = response.json()
 
-        juegos_raw = data.get('response', {}).get('ranks', [])[:30]  # Top 30
+        juegos_raw = data.get('response', {}).get('ranks', [])[:100]  # Top 30
 
         juegos = []
         for juego in juegos_raw:
