@@ -1,4 +1,3 @@
-<!-- templates/factura.html -->
 {% extends 'base.html' %}
 
 {% block content %}
@@ -8,7 +7,6 @@
 <p><strong>Correo electrónico:</strong> {{ email }}</p>
 <p><strong>Total:</strong> ${{ compra.total }}</p>
 <p><strong>Estado:</strong> {{ compra.get_estado_display }}</p>
-
 
 <table class="table table-bordered mt-3">
     <thead class="table-dark">
@@ -20,7 +18,7 @@
     <tbody>
         {% for detalle in detalles %}
         <tr>
-            <td>{{ detalle.juego.nombre }}</td>
+            <td>{{ detalle.nombre }}</td>
             <td>${{ detalle.precio_unitario }}</td>
         </tr>
         {% endfor %}
@@ -33,5 +31,5 @@
     <p>Esperamos verte nuevamente pronto 🎮</p>
 </div>
 
-<a href="{% url 'lista_juegos' %}" class="btn btn-primary mt-3">Seguir comprando</a>
+<a href="{% url 'juegos_populares' %}" class="btn btn-primary mt-3">Seguir comprando</a>
 {% endblock %}
