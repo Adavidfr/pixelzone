@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Top 40 Juegos Más Vendidos</h1>
+</div>
+
+<div class="list-group">
+         {% for item in juegos %}
+         {% if item.es_steam %}
+             <!-- Juego de Steam -->
+             <a href="{% url 'detalle_juego_api' item.steam_appid %}" class="list-group-item list-group-item-action d-flex align-items-center" style="background-color: #1a1c2c; color: #E8EAF2;">
+                 <strong class="me-3">{{ item.posicion }}.</strong>
+                 <img src="{{ item.imagen_url }}" alt="{{ item.nombre }}" style="height: 60px; width: auto;" class="me-3 tarjeta-hover">
+                 <div class="flex-grow-1">
+                     <div>{{ item.nombre }}</div>
+                     <small class="text-muted">{{ item.total_vendidos }} vendidos</small>
+                 </div>
+                 <div><strong>Steam</strong></div>
+             </a>
+         {% else %}
+             <!-- Juego local -->
+             <a href="{% url 'detalle_juego' item.juego.id %}" class="list-group-item list-group-item-action d-flex align-items-center" style="background-color: #1a1c2c; color: #E8EAF2;">
+                 <strong class="me-3">{{ item.posicion }}.</strong>
+                 {% if item.juego.imagen_principal %}
+                     <img src="{{ item.juego.imagen_principal }}" alt="{{ item.juego.nombre }}" style="height: 60px; width: auto;" class="me-3 tarjeta-hover">
+                 {% else %}
+                     <img src="https://via.placeholder.com/60" class="me-3 rounded">
+                 {% endif %}
+                 <div class="flex-grow-1">
+                     <div>{{ item.juego.nombre }}</div>
+                     <small class="text-muted">{{ item.total_vendidos }} vendidos</small>
+                 </div>
+                 <div><strong>${{ item.juego.precio }}</strong></div>
+             </a>
+         {% endif %}
+    {% empty %}
+        <p>No hay datos suficientes para mostrar los más vendidos.</p>
+    {% endfor %}
+</div>
+
+<!-- Botón para volver -->
+<div class="mt-4">
+    <a href="{% url 'juegos_populares' %}" class="btn" style="background-color: #17506E; color: #E8EAF2; border: none;">
+        <i class="bi bi-arrow-left"></i> Volver a Juegos Populares
+    </a>
+</div>
+{% endblock %}
