@@ -49,7 +49,6 @@ class Migration(migrations.Migration):
             name='ItemCarrito',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cantidad', models.PositiveIntegerField(default=1)),
                 ('carrito', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='tienda.carrito')),
                 ('juego', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='juegos.juego')),
             ],
