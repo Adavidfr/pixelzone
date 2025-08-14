@@ -12,5 +12,8 @@ urlpatterns = [
     path('admin/compras/', views.administrar_compras, name='administrar_compras'),
     path('admin/compras/factura/<int:compra_id>/', views.ver_factura_admin, name='ver_factura_admin'), 
     path('admin/compras/', views.administrar_compras, name='administrar_compras'),
-    path('mas-vendidos/', views.mas_vendidos, name='mas_vendidos')
+    path('mas-vendidos/', views.mas_vendidos, name='mas_vendidos'),
+
+    # Rutas para agregar juegos al carrito desde la API de Steam
+    path('carrito/agregar-api/<int:appid>/', views.agregar_al_carrito_api, name='agregar_al_carrito_api'),
 ]
