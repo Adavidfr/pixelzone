@@ -8,6 +8,7 @@ from django.db import models
 
 from .models import Carrito, ItemCarrito, Compra, DetalleCompra
 from juegos.models import Juego
+from steamapp.steam_service import obtener_detalle_juego_steam
 
 # -----------------------------
 # FUNCIONES PARA USUARIOS AUTENTICADOS
@@ -17,26 +18,82 @@ from juegos.models import Juego
 def agregar_al_carrito(request, juego_id):
     juego = get_object_or_404(Juego, id=juego_id)
     carrito, _ = Carrito.objects.get_or_create(usuario=request.user)
-    item, creado = ItemCarrito.objects.get_or_create(carrito=carrito, juego=juego)
+    existe = ItemCarrito.objects.filter(carrito=carrito, juego=juego).exists()
 
-    if not creado:
-        item.cantidad += 1
-        item.save()
-
-    messages.success(request, f"{juego.nombre} agregado al carrito.")
+    if existe:
+        messages.info(request, f"{juego.nombre} ya está en tu carrito.")
+    else:
+        ItemCarrito.objects.create(carrito=carrito, juego=juego)
+        messages.success(request, f"{juego.nombre} agregado al carrito.")
     return redirect('lista_juegos')
+
+@login_required
+def agregar_al_carrito_api(request, appid):
+    juego_data = obtener_detalle_juego_steam(appid)
+    if not juego_data:
+        messages.error(request, "No se pudo agregar el juego al carrito.")
+        return redirect('lista_juegos_api')
+
+    carrito, _ = Carrito.objects.get_or_create(usuario=request.user)
+    existe = ItemCarrito.objects.filter(carrito=carrito, steam_appid=appid).exists()
+
+    if existe:
+        messages.info(request, f"{juego_data.get('name', 'Este juego')} ya está en tu carrito.")
+    else:
+        ItemCarrito.objects.create(
+            carrito=carrito,
+            juego=None,
+            steam_appid=appid
+        )
+        messages.success(request, f"{juego_data.get('name', 'Juego de Steam')} agregado al carrito.")
+    return redirect('lista_juegos_api')
 
 
 @login_required
 def ver_carrito(request):
     carrito, _ = Carrito.objects.get_or_create(usuario=request.user)
-    items = carrito.items.select_related('juego')
-    total = sum(item.juego.precio * item.cantidad for item in items)
+    items = []
+    total = 0
 
-    return render(request, 'carrito.html', {
-        'items': items,
-        'total': total
-    })
+    for item in carrito.items.all():
+        if item.juego:  # Juego local
+            nombre = item.juego.nombre
+            precio = item.juego.precio
+            precio_original = item.juego.precio
+            descuento = item.juego.descuento
+            # Si imagen_miniatura ya es una URL o ruta, úsala directamente
+            imagen = item.juego.imagen_miniatura if item.juego.imagen_miniatura else ""
+        elif item.steam_appid:  # Juego de Steam
+            steam_data = obtener_detalle_juego_steam(item.steam_appid)
+            if steam_data:
+                nombre = steam_data['name']
+                precio = steam_data['final_price']
+                precio_original = steam_data['original_price']
+                descuento = steam_data['discount_percent']
+                imagen = steam_data['img']
+            else:
+                nombre = "Juego de Steam"
+                precio = 0
+                precio_original = 0
+                descuento = 0
+                imagen = ""
+        else:
+            continue
+
+        subtotal = precio
+        total += subtotal
+
+        items.append({
+            'id': item.id,
+            'nombre': nombre,
+            'precio': precio,
+            'precio_original': precio_original,
+            'descuento': descuento,
+            'subtotal': subtotal,
+            'imagen': imagen,
+        })
+
+    return render(request, 'carrito.html', {'items': items, 'total': total})
 
 
 @login_required
@@ -52,22 +109,69 @@ def eliminar_del_carrito(request, item_id):
 @transaction.atomic
 def confirmar_compra(request):
     carrito = get_object_or_404(Carrito, usuario=request.user)
-    items = carrito.items.select_related('juego')
+    items = carrito.items.all()
 
     if not items.exists():
         messages.warning(request, "Tu carrito está vacío.")
         return redirect('ver_carrito')
 
-    total = sum(item.juego.precio * item.cantidad for item in items)
+    # Procesar items y calcular total
+    total = 0
+    items_validos = []
+    
+    for item in items:
+        if item.juego:  # Juego local
+            precio = item.juego.precio
+            items_validos.append({
+                'juego': item.juego,
+                'precio': precio
+            })
+            total += precio
+        elif item.steam_appid:  # Juego de Steam
+            steam_data = obtener_detalle_juego_steam(item.steam_appid)
+            if steam_data:
+                precio = steam_data['final_price']
+                items_validos.append({
+                    'steam_appid': item.steam_appid,
+                    'nombre': steam_data['name'],
+                    'precio': precio,
+                    'es_steam': True
+                })
+                total += precio
+            else:
+                messages.warning(request, f"No se pudo obtener información del juego de Steam (ID: {item.steam_appid})")
+                continue
+        else:
+            messages.warning(request, "Se encontró un item inválido en el carrito.")
+            continue
+
+    if not items_validos:
+        messages.warning(request, "No hay items válidos en tu carrito.")
+        return redirect('ver_carrito')
+
+    # Crear la compra
     compra = Compra.objects.create(usuario=request.user, total=total)
 
-    for item in items:
-        DetalleCompra.objects.create(
-            compra=compra,
-            juego=item.juego,
-            precio_unitario=item.juego.precio
-        )
+    # Crear detalles de compra
+    for item_data in items_validos:
+        if item_data.get('es_steam'):
+            # Para juegos de Steam, usar el modelo específico
+            from .models import DetalleCompraSteam
+            DetalleCompraSteam.objects.create(
+                compra=compra,
+                steam_appid=item_data['steam_appid'],
+                nombre=item_data['nombre'],
+                precio_unitario=item_data['precio']
+            )
+        else:
+            # Para juegos locales
+            DetalleCompra.objects.create(
+                compra=compra,
+                juego=item_data['juego'],
+                precio_unitario=item_data['precio']
+            )
 
+    # Limpiar carrito
     carrito.items.all().delete()
     messages.success(request, "Compra realizada con éxito.")
     return redirect('ver_factura', compra_id=compra.id)
