@@ -59,7 +59,7 @@
       </div>
 
       <div class="d-flex align-items-center mt-4">
-        <a href="#" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
+        <a href="{% url 'agregar_al_carrito_steam' appid=juego.appid %}" class="btn btn-pink d-flex align-items-center justify-content-between px-4" style="gap: 1rem;">
           <span class="fw-bold">Añadir al carrito</span>
           {% if juego.descuento > 0 %}
             <span class="fs-6">
