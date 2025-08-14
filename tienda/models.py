@@ -7,8 +7,8 @@ class Carrito(models.Model):
 
 class ItemCarrito(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE, related_name='items')
-    juego = models.ForeignKey(Juego, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(default=1)
+    juego = models.ForeignKey(Juego, on_delete=models.CASCADE, null=True, blank=True)
+    steam_appid = models.PositiveIntegerField(null=True, blank=True)
 
 class Compra(models.Model):
     ESTADOS = [
@@ -26,5 +26,11 @@ class Compra(models.Model):
 
 class DetalleCompra(models.Model):
     compra = models.ForeignKey(Compra, on_delete=models.CASCADE)
-    juego = models.ForeignKey(Juego, on_delete=models.CASCADE)
+    juego = models.ForeignKey(Juego, on_delete=models.CASCADE, null=True, blank=True)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+class DetalleCompraSteam(models.Model):
+    compra = models.ForeignKey(Compra, on_delete=models.CASCADE)
+    steam_appid = models.PositiveIntegerField()
+    nombre = models.CharField(max_length=200)
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
