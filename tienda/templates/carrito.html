@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load math_filters %}
 
 {% block content %}
 <div class="py-4">
@@ -8,10 +9,18 @@
     <div class="list-group">
       {% for item in items %}
         <div class="list-group-item d-flex align-items-center justify-content-between mb-3 border-0" style="background-color:  #1a1c2c; color: #E8EAF2;">
-          <div>
-            <h5 class="mb-1 text-primary">{{ item.juego.nombre }}</h5>
-            <p class="mb-1">Precio unitario: <strong>${{ item.juego.precio }}</strong></p>
-            <p class="mb-1">Subtotal: <strong>${{ item.juego.precio|floatformat:2|add:item.juego.precio|floatformat:2 }}</strong></p>
+          <div class="d-flex align-items-center">
+            {% if item.imagen %}
+              <img src="{{ item.imagen }}" alt="{{ item.nombre }}" style="width: 80px; height: auto;" class="me-3 rounded">
+            {% endif %}
+                         <div>
+               <h5 class="mb-1 text-primary">{{ item.nombre }}</h5>
+               <p class="mb-1">Precio: <strong>${{ item.precio_original|floatformat:2 }}</strong></p>
+               {% if item.descuento > 0 %}
+                 <p class="mb-1">Descuento {{ item.descuento }}%: <strong class="text-warning">${{ item.precio_original|multiply:item.descuento|divide:100|floatformat:2 }}</strong></p>
+               {% endif %}
+               <p class="mb-1">Subtotal: <strong>${{ item.subtotal|floatformat:2 }}</strong></p>
+             </div>
           </div>
           <form action="{% url 'eliminar_del_carrito' item.id %}" method="post" class="mb-0">
             {% csrf_token %}
@@ -24,7 +33,7 @@
     </div>
 
     <div class="mt-4 d-flex justify-content-between align-items-center">
-      <h4>Total: <span class="text-warning">${{ total }}</span></h4>
+      <h4>Total: <span class="text-warning">${{ total|floatformat:2 }}</span></h4>
       <form action="{% url 'confirmar_compra' %}" method="post" class="mb-0">
         {% csrf_token %}
         <button type="submit" class="btn btn-entrar px-4 py-2 rounded-pill">
